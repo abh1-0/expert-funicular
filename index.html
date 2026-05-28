@@ -52,11 +52,13 @@
   </div>
 
   <div id="trackPanel" class="hidden">
-    <label for="refNo">Application / Service Reference Number</label>
-    <input id="refNo" class="input" placeholder="Example: PBAO123456" />
-    <button id="trackBtn" class="btn">Track Reference</button>
+    <div class="status">
+      <b>Reference Tracking</b><br>
+      Track account opening, identity verification, card delivery, chequebook/passbook delivery, UPI change and nominee requests on the separate tracking page.
+    </div>
+    <button id="trackBtn" class="btn">Open Reference Tracking</button>
     <div class="quick">
-      <div class="mini">Identity Status</div><div class="mini">Video KYC</div><div class="mini">Card Delivery</div><div class="mini">Service Request</div>
+      <div class="mini">Application Status</div><div class="mini">Identity Check</div><div class="mini">Card Delivery</div><div class="mini">Service Requests</div>
     </div>
     <div id="trackMsg" class="msg"></div>
   </div>
@@ -81,60 +83,80 @@
       const dots = $("dots");
       pad.innerHTML = "";
       [1,2,3,4,5,6,7,8,9,"Clear",0,"Back"].forEach(v=>{
-        const b=document.createElement("button");
-        b.type="button";
-        b.textContent=v;
-        b.onclick=()=>{
-          if(v==="Clear") pin.value="";
-          else if(v==="Back") pin.value=pin.value.slice(0,-1);
-          else if(pin.value.length<4) pin.value += String(v);
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = v;
+        b.onclick = ()=>{
+          if(v === "Clear") pin.value = "";
+          else if(v === "Back") pin.value = pin.value.slice(0,-1);
+          else if(pin.value.length < 4) pin.value += String(v);
           dots.textContent = "•".repeat(pin.value.length) + "-".repeat(4-pin.value.length);
         };
         pad.appendChild(b);
       });
     }
 
-    function modal(html){$("sheet").innerHTML=html;$("modal").style.display="flex";}
-    function closeModal(){ $("modal").style.display="none"; }
-    function loading(text,done){
+    function modal(html){
+      $("sheet").innerHTML = html;
+      $("modal").style.display = "flex";
+    }
+
+    function closeModal(){
+      $("modal").style.display = "none";
+    }
+
+    function loading(text, done){
       modal(`<h2>${text}</h2><div class="spinner"></div><div class="status" id="loadText">Connecting to secure server...</div>`);
-      const steps=["Validating session...","Checking device trust...","Verifying request...","Finalising..."];
-      let i=0;
-      const t=setInterval(()=>{
-        if(i<steps.length) $("loadText").textContent=steps[i++];
-        else{clearInterval(t);done();}
-      },350);
+      const steps = ["Validating request...","Checking secure route...","Opening page...","Finalising..."];
+      let i = 0;
+      const t = setInterval(()=>{
+        if(i < steps.length) $("loadText").textContent = steps[i++];
+        else {
+          clearInterval(t);
+          done();
+        }
+      }, 350);
     }
 
     function login(){
-      const u=$("userId").value.trim().toLowerCase();
-      const p=$("pin").value;
-      if(u===DEMO_USER && p===DEMO_PIN){
-        $("loginMsg").className="msg ok";
-        $("loginMsg").textContent="Login approved. Opening dashboard...";
-        loading("Secure Login",()=>{ window.location.href="dashboard.html"; });
-      }else{
-        $("loginMsg").className="msg bad";
-        $("loginMsg").textContent="Invalid User ID or Payments PIN.";
+      const u = $("userId").value.trim().toLowerCase();
+      const p = $("pin").value;
+      if(u === DEMO_USER && p === DEMO_PIN){
+        $("loginMsg").className = "msg ok";
+        $("loginMsg").textContent = "Login approved. Opening dashboard...";
+        loading("Secure Login",()=>{ window.location.href = "dashboard.html"; });
+      } else {
+        $("loginMsg").className = "msg bad";
+        $("loginMsg").textContent = "Invalid User ID or Payments PIN.";
       }
     }
 
     function track(){
-      const ref=$("refNo").value.trim();
-      if(!ref){$("trackMsg").className="msg bad";$("trackMsg").textContent="Enter a reference number.";return;}
-      loading("Checking Reference",()=>{
-        modal(`<h2>Reference Status</h2><div class="status"><b>${ref}</b><br>Status: Identity Verification Required<br>Next step: complete Video KYC and document check.</div><button class="btn" onclick="location.href='reference.html?ref=${encodeURIComponent(ref)}'">Continue Verification</button><button class="btn secondary" onclick="closeModal()">Close</button>`);
+      loading("Opening Reference Tracking",()=>{
+        window.location.href = "reference.html";
       });
     }
 
-    $("tabLogin").onclick=()=>showPanel("login");
-    $("tabTrack").onclick=()=>showPanel("track");
-    $("loginBtn").onclick=login;
-    $("trackBtn").onclick=track;
-    $("openBtn").onclick=()=>{ window.location.href="open-account.html"; };
-    $("forgot").onclick=e=>{e.preventDefault();modal('<h2>PIN Assistance</h2><div class="status">PIN reset requires identity verification from the reference tracker page.</div><button class="btn" onclick="closeModal()">OK</button>');};
-    $("help").onclick=e=>{e.preventDefault();modal('<h2>Help</h2><div class="status">Use your User ID and Payments PIN. For application status, open the Track tab.</div><button class="btn" onclick="closeModal()">OK</button>');};
-    $("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal();});
+    $("tabLogin").onclick = ()=>showPanel("login");
+    $("tabTrack").onclick = ()=>showPanel("track");
+    $("loginBtn").onclick = login;
+    $("trackBtn").onclick = track;
+    $("openBtn").onclick = ()=>{ window.location.href = "open-account.html"; };
+
+    $("forgot").onclick = e=>{
+      e.preventDefault();
+      window.location.href = "forgot.html";
+    };
+
+    $("help").onclick = e=>{
+      e.preventDefault();
+      modal('<h2>Help</h2><div class="status">Use your User ID and Payments PIN. For application status, open Reference Tracking.</div><button class="btn" onclick="closeModal()">OK</button>');
+    };
+
+    $("modal").addEventListener("click", e=>{
+      if(e.target.id === "modal") closeModal();
+    });
+
     makePad();
   </script></body>
 </html>
