@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Face Verification</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(180deg,#07142d 0,#08152f 45%,#040812 100%);color:#eef5ff;padding:16px}.wrap{max-width:900px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.brand{display:flex;align-items:center;gap:12px;font-weight:1000}.logo{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,#fff,#c7d7ff);color:#1538b0;display:grid;place-items:center;font-size:28px}.card{background:linear-gradient(180deg,#ffffff14,#ffffff0b);border:1px solid #ffffff22;border-radius:30px;padding:20px;box-shadow:0 25px 70px #0008;backdrop-filter:blur(18px);animation:fade .45s cubic-bezier(.22,1,.36,1);margin-bottom:14px;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .45s cubic-bezier(.22,1,.36,1)}h1,h2,h3{margin:0 0 10px}.muted,p{color:#bdcafa;line-height:1.45}.input,select{width:100%;border:1px solid #ffffff25;background:#ffffff14;color:#fff;border-radius:18px;padding:15px;margin:8px 0;font-size:16px;outline:none}.input::placeholder{color:#bdcafa}.btn{width:100%;border:0;border-radius:18px;padding:15px;margin-top:10px;font-weight:1000;font-size:16px;background:linear-gradient(135deg,#fff,#dbe7ff);color:#1237a8;box-shadow:0 14px 30px #0005;transition:.32s cubic-bezier(.22,1,.36,1)}.btn.sec{background:#ffffff14;color:#fff;border:1px solid #ffffff25;box-shadow:none}.btn:active{transform:scale(.97)}.status{background:#ffffff12;border:1px solid #ffffff22;border-radius:20px;padding:14px;margin:10px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hidden{display:none!important}.stage{display:flex;gap:8px;margin:14px 0}.step{height:8px;flex:1;border-radius:99px;background:#ffffff18}.step.on{background:#fff}.camBox{position:relative;border-radius:28px;overflow:hidden;background:#000;min-height:420px;border:1px solid #ffffff25;box-shadow:inset 0 0 0 1px #ffffff12,0 18px 45px #0008;animation:camIn .45s cubic-bezier(.22,1,.36,1)}.camBox video{width:100%;height:100%;min-height:420px;object-fit:cover;display:block}.overlay{position:absolute;inset:0;pointer-events:none;display:grid;place-items:center}.idFrame{width:82%;max-width:560px;aspect-ratio:1.58;border:2px solid #b7ffce;border-radius:22px;box-shadow:0 0 0 999px #0008,0 0 28px #58e08a55;position:relative;animation:scanPulse 1.8s infinite}.idFrame:before,.idFrame:after{content:\"\";position:absolute;inset:14px;border:1px dashed #ffffffaa;border-radius:14px}.hint{position:absolute;left:14px;right:14px;bottom:14px;background:#050914cc;border:1px solid #ffffff25;border-radius:18px;padding:12px;text-align:center;backdrop-filter:blur(12px);animation:slideUp .42s cubic-bezier(.22,1,.36,1)}.faceOval{width:58%;max-width:310px;aspect-ratio:.72;border:3px solid #ff6b7a;border-radius:50%;box-shadow:0 0 0 999px #0008,0 0 30px #ff6b7a66;transition:.55s cubic-bezier(.22,1,.36,1);animation:faceFloat 2.2s infinite}.faceOval.yellow{border-color:#ffd166;box-shadow:0 0 0 999px #0007,0 0 30px #ffd16677}.faceOval.green{border-color:#58e08a;box-shadow:0 0 0 999px #0007,0 0 30px #58e08a77}.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid #ffffff25;background:#ffffff12;border-radius:999px;padding:9px 12px}.red{color:#ffb4b4}.yellow{color:#ffd166}.green,.ok{color:#b7ffce}.loader{height:8px;border-radius:999px;background:#ffffff18;overflow:hidden}.bar{height:100%;width:35%;background:linear-gradient(90deg,#fff,#58e08a);border-radius:999px;animation:load 1s infinite}.shot{width:100%;border-radius:20px;background:#000;border:1px solid #ffffff25}.receipt{background:#ffffff12;border:1px solid #ffffff22;border-radius:22px;padding:14px}.r{display:flex;justify-content:space-between;border-bottom:1px dashed #ffffff25;padding:10px 0;gap:10px}.r:last-child{border-bottom:0}.big{font-size:64px;text-align:center}.pulse{animation:pulse 1.2s infinite}@keyframes pulse{50%{transform:scale(1.04);opacity:.75}}@keyframes load{from{transform:translateX(-120%)}to{transform:translateX(330%)}}@keyframes fade{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}@keyframes camIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}@keyframes scanPulse{50%{box-shadow:0 0 0 999px #0008,0 0 42px #58e08a88}}@keyframes faceFloat{50%{transform:scale(1.025)}}@media(max-width:720px){.grid{grid-template-columns:1fr}.card{border-radius:24px}.camBox,.camBox video{min-height:520px}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="top"><div class="brand"><div class="logo">P</div><div>Pluxee Bank<br><span class="muted">Face Verification</span></div></div><button class="btn sec" style="width:auto" onclick="location.href='reference.html'">Back</button></div>
+ <section class="card">
+  <h1>Face Verification</h1>
+  <p>Complete ID capture and face verification using your device camera. Keep your document ready and make sure your face is clearly visible.</p>
+  <div class="stage"><div id="s1" class="step on"></div><div id="s2" class="step"></div><div id="s3" class="step"></div><div id="s4" class="step"></div><div id="s5" class="step"></div></div>
+  <div id="app"></div>
+ </section>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let stream=null,mode="environment",idShot="",faceShot="",faceTimer=null,doc={type:"",number:"",name:"",dob:""};
+const ref=()=> "VKYC"+Math.floor(100000+Math.random()*900000);
+const now=()=>new Date().toLocaleString("en-IN");
+function steps(n){[1,2,3,4,5].forEach(i=>$("s"+i).classList.toggle("on",i<=n))}
+function stopCam(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
+async function startCam(facing){stopCam();mode=facing;try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing}},audio:false});$("video").srcObject=stream;return true}catch(e){$("camMsg").innerHTML='<span class="red">Camera permission unavailable. Open through HTTPS and allow camera permission.</span>';return false}}
+function start(){steps(1);$("app").innerHTML=`<h2>Before you start</h2><div class="grid"><div class="status"><b>Checklist</b><br>✓ ID card/document ready<br>✓ Good lighting<br>✓ Camera permission allowed<br>✓ Face clearly visible<br>✓ Stable internet</div><div class="status"><b>Flow</b><br>1. Scan ID with rear camera<br>2. Capture ID photo<br>3. Switch to face scan<br>4. Capture face photo<br>5. Submit Verification</div></div><button class="btn" onclick="docDetails()">Start Face Verification</button><button class="btn sec" onclick="location.href='reference.html'">Back to Reference Tracking</button>`}
+function docDetails(){
+steps(2);
+$("app").innerHTML=`<h2>Document Details</h2>
+<div class="status"><b>Enter document information first.</b><br>This will be attached to the captured document image and face verification session.</div>
+<div class="grid">
+ <div>
+  <label>Document Type</label>
+  <select id="docType">
+   <option>School Identity Card</option>
+   <option>Aadhaar Card</option>
+   <option>Passport</option>
+   <option>Birth Certificate</option>
+   <option>PAN Card</option>
+   <option>Other Government ID</option>
+  </select>
+  <input id="docNo" class="input" placeholder="Document / ID number">
+  <input id="docName" class="input" placeholder="Name on document">
+  <input id="docDob" class="input" type="date">
+ </div>
+ <div class="status">
+  <b>Guide</b><br>
+  1. Select the document type.<br>
+  2. Enter the document number.<br>
+  3. Enter name exactly as printed.<br>
+  4. Enter DOB if available.<br>
+  5. Continue to camera capture.
+ </div>
+</div>
+<button class="btn" onclick="saveDocDetails()">Continue to Document Capture</button>
+<button class="btn sec" onclick="start()">Back</button>`;
+}
+function saveDocDetails(){
+let type=$("docType").value,number=$("docNo").value.trim(),name=$("docName").value.trim(),dob=$("docDob").value;
+if(!number||!name)return alert("Enter document number and name on document.");
+doc={type,number,name,dob};
+idScan();
+}
+function idScan(){steps(2);$("app").innerHTML=`<h2>Document Capture</h2><div class="status">Place your document inside the frame. Keep the document flat, readable and inside the border.</div><div class="camBox"><video id="video" autoplay playsinline></video><div class="overlay"><div class="idFrame"></div><div class="hint">Fit document inside the frame</div></div></div><div id="camMsg" class="status">Starting rear camera...</div><button class="btn" onclick="captureId()">Capture ID Photo</button><button class="btn sec" onclick="idScan()">Restart Camera</button>`;startCam("environment").then(ok=>{if(ok)$("camMsg").innerHTML='<span class="green">Camera ready. Align document and capture.</span>'})}
+function snap(){let v=$("video"),c=document.createElement("canvas");c.width=v.videoWidth||720;c.height=v.videoHeight||480;c.getContext("2d").drawImage(v,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.9)}
+function captureId(){if(!stream)return alert("Camera is not ready yet.");idShot=snap();stopCam();$("app").innerHTML=`<h2>Document Captured</h2><img class="shot" src="${idShot}"><div class="status green">Document image captured successfully.</div><div class="receipt"><div class="r"><span>Document Type</span><b>${doc.type}</b></div><div class="r"><span>Document Number</span><b>${doc.number}</b></div><div class="r"><span>Name</span><b>${doc.name}</b></div></div><button class="btn" onclick="faceScan()">Continue to Face Verification</button><button class="btn sec" onclick="idScan()">Retake ID Photo</button>`}
+function faceScan(){steps(3);$("app").innerHTML=`<h2>Face Verification</h2><div class="status">Keep your face inside the oval. Look straight at the camera and hold steady until the border turns green.</div><div class="camBox"><video id="video" autoplay playsinline></video><div class="overlay"><div id="faceOval" class="faceOval"></div><div id="faceHint" class="hint"><span class="red">● Face not detected</span></div></div></div><div id="camMsg" class="status">Starting front camera...</div><button id="faceBtn" class="btn" disabled onclick="captureFace()">Capture Face Photo</button><button class="btn sec" onclick="faceScan()">Restart Face Scan</button>`;startCam("user").then(ok=>{if(ok){$("camMsg").innerHTML='<span class="green">Front camera ready.</span>';simulateFace()}})}
+function simulateFace(){clearTimeout(faceTimer);let oval=$("faceOval"),hint=$("faceHint"),btn=$("faceBtn");oval.className="faceOval";hint.innerHTML='<span class="red">● Face not in frame — adjust position</span>';btn.disabled=true;faceTimer=setTimeout(()=>{oval.className="faceOval yellow";hint.innerHTML='<span class="yellow">● Hold steady — checking position</span>'},1600);setTimeout(()=>{oval.className="faceOval green pulse";hint.innerHTML='<span class="green">● Face aligned — ready to capture</span>';btn.disabled=false},3300)}
+function captureFace(){if(!stream)return alert("Camera is not ready yet.");faceShot=snap();stopCam();review()}
+function review(){steps(4);$("app").innerHTML=`<h2>Review Captures</h2><div class="grid"><div><h3>ID Capture</h3><img class="shot" src="${idShot}"></div><div><h3>Face Capture</h3><img class="shot" src="${faceShot}"></div></div><div class="receipt"><div class="r"><span>Document Type</span><b>${doc.type}</b></div><div class="r"><span>Document Number</span><b>${doc.number}</b></div><div class="r"><span>Name on Document</span><b>${doc.name}</b></div><div class="r"><span>DOB</span><b>${doc.dob||"Not provided"}</b></div></div><div class="status">Confirm both captures and document details are correct before submitting.</div><button class="btn" onclick="process()">Submit Verification</button><button class="btn sec" onclick="docDetails()">Restart Verification</button>`}
+function process(){steps(5);let msgs=["Uploading encrypted verification frames...","Checking document image quality...","Matching face capture session...","Generating verification receipt..."];let i=0;$("app").innerHTML=`<h2>Processing Verification</h2><p id="msg">${msgs[0]}</p><div class="loader"><div class="bar"></div></div>`;let t=setInterval(()=>{$("msg").textContent=msgs[++i%msgs.length]},750);setTimeout(()=>{clearInterval(t);success()},3600)}
+function success(){let r=ref();$("app").innerHTML=`<div class="big ok">✓</div><h2>Face Verification Completed</h2><div class="receipt"><div class="r"><span>Status</span><b class="ok">Successful</b></div><div class="r"><span>Reference ID</span><b>${r}</b></div><div class="r"><span>Date & Time</span><b>${now()}</b></div><div class="r"><span>Document Type</span><b>${doc.type}</b></div><div class="r"><span>Document Number</span><b>${doc.number}</b></div><div class="r"><span>Document Scan</span><b class="ok">Accepted</b></div><div class="r"><span>Face Capture</span><b class="ok">Accepted</b></div></div><button class="btn" onclick="location.href='reference.html'">Back to Reference Tracking</button><button class="btn sec" onclick="location.href='index.html'">Go to Login</button>`}
+window.addEventListener("beforeunload",stopCam);
+start();
+</script>
+</body>
+</html>
