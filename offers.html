@@ -1,0 +1,745 @@
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Pluxee Bank" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Rewards Ecosystem - Pluxee Bank</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #2147d8 0, #08152f 42%, #050914 100%);
+      color: #eaf1ff; overflow-x: hidden;
+    }
+    .app { max-width: 1100px; margin: auto; padding: 14px; padding-bottom: 80px; }
+    
+    /* Header & Branding */
+    .top {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(5, 9, 20, 0.82); backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .topin {
+      max-width: 1100px; margin: auto; padding: 12px 14px;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .logo {
+      width: 44px; height: 44px; border-radius: 16px;
+      background: linear-gradient(135deg, #fff, #b9ccff);
+      color: #1237a8; display: grid; place-items: center; font-size: 24px; font-weight: 1000;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand b { font-size: 18px; }
+    .brand small { display: block; color: #b9c8ef; }
+    .pill {
+      border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px; color: #eaf1ff; padding: 10px 12px; font-weight: 900;
+      cursor: pointer; text-decoration: none; font-size: 14px;
+    }
+    
+    /* Core UI Elements */
+    .card {
+      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 25px 70px #0008; border-radius: 28px; padding: 22px; margin: 14px 0;
+      backdrop-filter: blur(18px); position: relative; overflow: hidden;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(124, 58, 237, 0.15));
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+    .muted { color: #b9c8ef; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .tile {
+      background: rgba(0, 0, 0, 0.22); border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px; padding: 18px; position: relative; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: space-between;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .tile:active { transform: scale(0.98); }
+    .tile h3 { margin: 0 0 8px; font-size: 18px; }
+    
+    /* Navigation */
+    .nav {
+      display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-bottom: 10px;
+      scrollbar-width: none;
+    }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav button {
+      white-space: nowrap; border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.1); color: #eaf1ff; border-radius: 999px;
+      padding: 11px 16px; font-weight: 1000; cursor: pointer; transition: 0.3s;
+    }
+    .nav button.on { background: #fff; color: #1237a8; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
+    .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 12px; }
+    .sub-nav button {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      color: #cbd8ff; border-radius: 12px; padding: 8px 14px; font-size: 14px; font-weight: bold; cursor: pointer;
+    }
+    .sub-nav button.on { background: rgba(37,99,235,0.3); border-color: #60a5fa; color: #fff; }
+    
+    .page { display: none; }
+    .page.on { display: block; animation: fade 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    
+    /* Inputs & Buttons */
+    .input, select, textarea {
+      width: 100%; border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.12);
+      color: #fff; border-radius: 16px; padding: 14px; font-size: 16px; margin: 7px 0 12px; outline: none;
+    }
+    .input::placeholder { color: #93a4cc; }
+    .btn {
+      width: 100%; border: 0; border-radius: 17px; padding: 14px; margin-top: 8px;
+      font-size: 15px; font-weight: 1000; background: linear-gradient(135deg, #fff, #dbe7ff);
+      color: #1237a8; box-shadow: 0 14px 30px #0005; cursor: pointer; transition: 0.2s;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .sec { background: rgba(255, 255, 255, 0.12); color: #eaf1ff; border: 1px solid rgba(255, 255, 255, 0.16); box-shadow: none; }
+    .danger { background: rgba(220, 38, 38, 0.2); color: #fca5a5; border: 1px solid rgba(220, 38, 38, 0.4); }
+    
+    /* Status & Text Colors */
+    .ok { color: #b7ffce; font-weight: 1000; }
+    .bad { color: #ffb4b4; font-weight: 1000; }
+    .gold { color: #fbbf24; font-weight: 1000; }
+    .status {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px; padding: 12px; color: #cbd8ff; font-size: 14px; margin: 8px 0;
+    }
+    
+    /* Banners & Offers */
+    .banner-container { display: flex; overflow-x: auto; gap: 16px; scroll-snap-type: x mandatory; padding-bottom: 10px; scrollbar-width: none; }
+    .banner {
+      min-width: 85%; scroll-snap-align: start; border-radius: 24px; padding: 24px;
+      background-size: cover; background-position: right; position: relative;
+      border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .banner::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%); border-radius: 23px; z-index: 1; }
+    .banner-content { position: relative; z-index: 2; }
+    
+    /* Progress Bars & Tiers */
+    .tier-box { background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(217,119,6,0.1)); border: 1px solid rgba(251,191,36,0.4); border-radius: 24px; padding: 20px; text-align: center; }
+    .prog-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden; margin: 12px 0; }
+    .prog-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); border-radius: 99px; transition: width 1s ease; }
+    
+    /* Scratch Cards */
+    .scratch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+    .s-card {
+      aspect-ratio: 1; border-radius: 20px; position: relative; cursor: pointer;
+      background: linear-gradient(135deg, #1e3a8a, #312e81); border: 2px solid rgba(255,255,255,0.2);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .s-cover {
+      position: absolute; inset: 0; background: linear-gradient(135deg, #cbd8ff, #93a4cc);
+      display: flex; align-items: center; justify-content: center; z-index: 2;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .s-cover::after { content: ''; font-size: 40px; }
+    .s-card.revealed .s-cover { opacity: 0; transform: scale(1.2); pointer-events: none; }
+    .s-content { text-align: center; z-index: 1; }
+    
+    /* Modals & Keypad & Loading */
+    .modal {
+      display: none; position: fixed; inset: 0; background: #000a; z-index: 50;
+      align-items: flex-end; justify-content: center; backdrop-filter: blur(5px);
+    }
+    .sheet {
+      background: #08152f; color: #eaf1ff; border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 28px 28px 0 0; max-width: 460px; width: 100%; padding: 24px;
+      max-height: 92vh; overflow-y: auto; position: relative;
+    }
+    .slideIn { animation: slide 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+    
+    .pad { max-width: 310px; margin: 12px auto 0; }
+    .pad button { min-height: 58px; margin: 0 !important; padding: 0 !important; border-radius: 18px; font-size: 20px; }
+    .pad button:active { background: rgba(255, 255, 255, 0.25); }
+    
+    .vkyc-box { margin: 20px 0; }
+    .vkyc-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 99px; overflow: hidden; margin-bottom: 12px; }
+    .vkyc-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #2563eb, #7c3aed); border-radius: 99px; transition: width 0.3s linear; }
+    
+    .successHero { text-align: center; padding: 10px 0; }
+    .bigTick {
+      width: 82px; height: 82px; border-radius: 50%; margin: 8px auto 14px;
+      background: rgba(34, 197, 94, 0.18); border: 1px solid rgba(183, 255, 206, 0.45);
+      display: grid; place-items: center; font-size: 46px; color: #b7ffce; animation: pop 0.4s cubic-bezier(0.2,0.8,0.2,1.2);
+    }
+    
+    .receipt { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; padding: 16px; margin: 16px 0; }
+    .rline { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed rgba(255, 255, 255, 0.14); padding: 10px 0; font-size: 14px; }
+    .rline:last-child { border-bottom: 0; }
+    
+    .tx { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .tx:last-child { border-bottom: none; }
+    
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 1000; text-transform: uppercase; margin-bottom: 8px; }
+    
+    @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slide { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    @media(min-width:760px) {
+      .modal { align-items: center; }
+      .sheet { border-radius: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top">
+    <div class="topin">
+      <div class="brand">
+        <div class="logo">P</div>
+        <div><b>Pluxee Bank</b><small>Rewards & Offers Ecosystem</small></div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <div class="pill" style="pointer-events: none;" id="topBalBox">Bal: 1,250</div>
+        <button class="pill" onclick="window.history.back();">Dashboard</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app">
+    <nav class="nav" id="mainNav">
+      <button class="on" onclick="showTab('offers')"> Offers</button>
+      <button onclick="showTab('rewards')"> Rewards & Scratch</button>
+      <button onclick="showTab('vouchers')"> Vouchers Store</button>
+      <button onclick="showTab('myvouchers')"> My Vouchers</button>
+      <button onclick="showTab('missions')"> Missions</button>
+      <button onclick="showTab('history')"> History</button>
+    </nav>
+
+    <section class="page on" id="offers">
+      <div class="banner-container">
+        <div class="banner" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\'><rect width=\'400\' height=\'200\' fill=\'%237c3aed\'/></svg>');">
+          <div class="banner-content">
+            <span class="badge" style="background:#f59e0b; color:#fff;">Ending in 2d 14h</span>
+            <h2 style="margin:0 0 8px; font-size:28px;">Gaming Festival</h2>
+            <p style="margin:0 0 16px; font-size:15px; color:#eaf1ff;">Get Flat 5% Cashback on Roblox, Steam & Play Store purchases above 1000.</p>
+            <button class="btn sec" style="width:auto; padding:8px 20px; margin:0;" onclick="showTab('vouchers')">Explore Vouchers</button>
+          </div>
+        </div>
+        <div class="banner" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\'><rect width=\'400\' height=\'200\' fill=\'%23dc2626\'/></svg>');">
+          <div class="banner-content">
+            <span class="badge" style="background:#fff; color:#dc2626;">Trending</span>
+            <h2 style="margin:0 0 8px; font-size:28px;">McDonald's Mania</h2>
+            <p style="margin:0 0 16px; font-size:15px; color:#eaf1ff;">Claim Flat 100 Off on your next meal voucher. Limited quantity available.</p>
+            <button class="btn sec" style="width:auto; padding:8px 20px; margin:0;" onclick="showTab('vouchers')">Grab Now</button>
+          </div>
+        </div>
+        <div class="banner" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\'><rect width=\'400\' height=\'200\' fill=\'%23059669\'/></svg>');">
+          <div class="banner-content">
+            <span class="badge" style="background:#fcd34d; color:#92400e;">Weekend Special</span>
+            <h2 style="margin:0 0 8px; font-size:28px;">Shopping Bonanza</h2>
+            <p style="margin:0 0 16px; font-size:15px; color:#eaf1ff;">Up to 250 Cashback on Amazon and Flipkart vouchers this weekend.</p>
+            <button class="btn sec" style="width:auto; padding:8px 20px; margin:0;" onclick="showTab('vouchers')">Shop Now</button>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin: 24px 0 12px;">Recommended For You</h3>
+      <div class="grid">
+        <div class="tile" style="background: linear-gradient(135deg, rgba(234,88,12,0.15), rgba(0,0,0,0.25));">
+          <h3 style="color: #f97316;">Daily Check-In</h3>
+          <p class="muted" style="font-size:13px; margin:4px 0 12px;">Earn 10 Reward Points daily. Maintain your streak for bonus scratch cards.</p>
+          <button class="btn sec" onclick="handleDailyCheckin()">Check In Today</button>
+        </div>
+        <div class="tile" style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(0,0,0,0.25));">
+          <h3 style="color: #34d399;">Refer & Earn 500</h3>
+          <p class="muted" style="font-size:13px; margin:4px 0 12px;">Invite friends to Pluxee Bank and earn guaranteed scratch cards.</p>
+          <button class="btn sec" onclick="alert('Referral link copied to clipboard!')">Share Invite Link</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="rewards">
+      <div class="tier-box">
+        <div style="font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color: #fbbf24;">Gold Member</div>
+        <div style="font-size: 36px; font-weight: 1000; margin: 10px 0;" id="rpDisplay">1,450 <span style="font-size: 16px; color:#cbd8ff;">Pts</span></div>
+        <div class="prog-bg"><div class="prog-fill" style="width: 58%;"></div></div>
+        <div style="font-size: 13px; color: #cbd8ff;">1,050 Pts more to reach <b style="color:#e2e8f0;">Platinum Tier</b></div>
+      </div>
+
+      <div class="grid" style="margin-top: 16px;">
+        <div class="tile">
+          <div class="muted" style="font-size:13px;">Lifetime Cashback Earned</div>
+          <div class="ok" style="font-size: 24px; font-weight: 1000;" id="ltcbDisplay">450</div>
+        </div>
+        <div class="tile">
+          <div class="muted" style="font-size:13px;">Pending Vouchers</div>
+          <div style="font-size: 24px; font-weight: 1000;" id="pendingVDisplay">2</div>
+        </div>
+      </div>
+
+      <h3 style="margin: 24px 0 12px;">Your Scratch Cards</h3>
+      <div class="scratch-grid" id="scratchContainer">
+        </div>
+    </section>
+
+    <section class="page" id="vouchers">
+      <div class="sub-nav" id="catNav">
+        <button class="on" onclick="setVoucherCat('All')">All</button>
+        <button onclick="setVoucherCat('Food')"> Food</button>
+        <button onclick="setVoucherCat('Gaming')"> Gaming</button>
+        <button onclick="setVoucherCat('Shopping')"> Shopping</button>
+        <button onclick="setVoucherCat('Streaming')"> Streaming</button>
+        <button onclick="setVoucherCat('Travel')"> Travel</button>
+        <button onclick="setVoucherCat('Education')"> Education</button>
+      </div>
+      <div class="grid" id="vouchersList">
+        </div>
+    </section>
+
+    <section class="page" id="myvouchers">
+      <div class="card" style="margin-top:0;">
+        <h2 style="margin-top:0;">My Vouchers & Cards</h2>
+        <p class="muted" style="font-size:14px; margin-bottom: 20px;">View active codes, claim your purchased vouchers, or request buyer protection refunds.</p>
+        <div id="myVouchersContainer">
+          </div>
+      </div>
+      
+      <div class="card">
+        <h3 style="margin-top:0;">Refund Tracking</h3>
+        <div id="refundsContainer"></div>
+      </div>
+    </section>
+
+    <section class="page" id="missions">
+      <div class="card" style="margin-top:0;">
+        <h2 style="margin-top:0;">Active Missions</h2>
+        <p class="muted" style="font-size:14px; margin-bottom: 20px;">Complete tasks across the Pluxee ecosystem to earn guaranteed scratch cards and direct cashback.</p>
+        <div id="missionsContainer">
+          </div>
+      </div>
+    </section>
+
+    <section class="page" id="history">
+      <div class="card" style="margin-top:0;">
+        <h2 style="margin-top:0;">Rewards Ledger</h2>
+        <p class="muted" style="font-size:14px; margin-bottom: 20px;">Comprehensive cryptographic track of all ecosystem purchases, claims, and refunds.</p>
+        <div id="historyContainer">
+          </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal">
+    <div id="sheet" class="sheet slideIn"></div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    
+    // Core State
+    let state = {
+      bal: 1250,
+      rp: 1450,
+      ltcb: 450,
+      checkedInToday: false,
+      scratchCards: [
+        { id: 'sc_1', type: 'cash', val: 50, status: 'unscratched' },
+        { id: 'sc_2', type: 'points', val: 100, status: 'unscratched' },
+        { id: 'sc_3', type: 'cash', val: 15, status: 'unscratched' }
+      ],
+      vouchers: [
+        { id: 'v_1', cat: 'Food', brand: 'McDonald\'s', val: 500, price: 450, desc: 'Flat 50 Off on 500 Voucher' },
+        { id: 'v_2', cat: 'Food', brand: 'Domino\'s', val: 1000, price: 900, desc: '10% Off on Pizzas' },
+        { id: 'v_3', cat: 'Food', brand: 'KFC', val: 300, price: 280, desc: 'Instant Delivery' },
+        
+        { id: 'v_4', cat: 'Gaming', brand: 'Google Play', val: 1000, price: 1000, desc: 'Earn 5% Cashback (Offer)' },
+        { id: 'v_5', cat: 'Gaming', brand: 'Roblox', val: 500, price: 500, desc: '400 Robux Pin' },
+        { id: 'v_6', cat: 'Gaming', brand: 'Steam', val: 2000, price: 2000, desc: 'Wallet Code' },
+        
+        { id: 'v_7', cat: 'Shopping', brand: 'Amazon Pay', val: 5000, price: 5000, desc: 'Up to 250 CB' },
+        { id: 'v_8', cat: 'Shopping', brand: 'Flipkart', val: 2000, price: 2000, desc: 'Instant Vouchers' },
+        
+        { id: 'v_9', cat: 'Streaming', brand: 'Netflix', val: 149, price: 149, desc: 'Mobile Plan - 1 Month' },
+        { id: 'v_10', cat: 'Streaming', brand: 'Spotify', val: 119, price: 119, desc: 'Premium - 1 Month' },
+        
+        { id: 'v_11', cat: 'Travel', brand: 'Uber', val: 500, price: 475, desc: '5% Off Rides' },
+        { id: 'v_12', cat: 'Travel', brand: 'Ola', val: 1000, price: 950, desc: '5% Off Rides' },
+        
+        { id: 'v_13', cat: 'Education', brand: 'Udemy', val: 1000, price: 1000, desc: 'Course Credit' }
+      ],
+      myVouchers: [
+        { refId: 'PX881920', vId: 'v_4', date: '28/05/2026', status: 'Available', code: 'GP-XXXX-XXXX' },
+        { refId: 'PX881512', vId: 'v_1', date: '20/05/2026', status: 'Claimed', code: 'MCD-9912-33' }
+      ],
+      refunds: [
+        { rId: 'RF44021', refId: 'PX871000', brand: 'Spotify', val: 119, date: '15/05/2026', status: 'Completed' }
+      ],
+      missions: [
+        { id: 'm_1', title: 'First Voucher Purchase', desc: 'Buy any voucher from the store.', target: 1, current: 0, reward: '25 Cashback', status: 'active' },
+        { id: 'm_2', title: 'Gamer Streak', desc: 'Purchase 2 gaming category vouchers.', target: 2, current: 1, reward: '1 Scratch Card', status: 'active' },
+        { id: 'm_3', title: 'Profile Setup', desc: 'Verify email & link UPI.', target: 2, current: 2, reward: '100 Reward Points', status: 'ready' }
+      ],
+      history: [
+        { id: 'PX881920', title: 'Bought Google Play Voucher', amt: -1000, date: '28/05/2026 10:15 AM', status: 'Successful' },
+        { id: 'PX881512', title: 'Bought McDonald\'s Voucher', amt: -450, date: '20/05/2026 02:40 PM', status: 'Successful' }
+      ]
+    };
+
+    let activeCat = 'All';
+    
+    // Engine Logic
+    function fmt(n) { return '' + Number(n).toLocaleString('en-IN'); }
+    function genId(prefix) { return prefix + Math.floor(100000 + Math.random() * 900000); }
+    function nowStr() { return new Date().toLocaleString('en-IN'); }
+    
+    function updateBal() {
+      $('topBalBox').textContent = 'Bal: ' + fmt(state.bal);
+      $('rpDisplay').innerHTML = state.rp.toLocaleString() + ' <span style="font-size:16px; color:#cbd8ff;">Pts</span>';
+      $('ltcbDisplay').textContent = fmt(state.ltcb);
+      let pV = state.myVouchers.filter(v => v.status === 'Available').length;
+      $('pendingVDisplay').textContent = pV;
+    }
+
+    function showTab(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+      document.querySelectorAll('#mainNav button').forEach(b => b.classList.remove('on'));
+      $(id).classList.add('on');
+      event.target.classList.add('on');
+    }
+
+    function renderScratchCards() {
+      const c = $('scratchContainer');
+      if(state.scratchCards.length === 0) { c.innerHTML = '<div class="muted">No scratch cards available.</div>'; return; }
+      c.innerHTML = state.scratchCards.map(s => {
+        if(s.status === 'unscratched') {
+          return `<div class="s-card" onclick="openScratchModal('${s.id}')">
+                    <div class="s-cover"></div>
+                    <div class="s-content"><b style="font-size:24px;">?</b><br><span style="font-size:12px;">Tap to Reveal</span></div>
+                  </div>`;
+        } else if (s.status === 'claimed') {
+          return `<div class="s-card" style="opacity:0.6; cursor:default; border-color:#22c55e;">
+                    <div class="s-content" style="color:#b7ffce;"><b style="font-size:18px;">Claimed</b><br>${s.type==='cash'?fmt(s.val):s.val+' Pts'}</div>
+                  </div>`;
+        }
+      }).join('');
+    }
+
+    function setVoucherCat(cat) {
+      activeCat = cat;
+      document.querySelectorAll('#catNav button').forEach(b => b.classList.remove('on'));
+      event.target.classList.add('on');
+      renderVouchersStore();
+    }
+
+    function renderVouchersStore() {
+      const c = $('vouchersList');
+      let vs = state.vouchers;
+      if(activeCat !== 'All') vs = vs.filter(v => v.cat === activeCat);
+      
+      c.innerHTML = vs.map(v => `
+        <div class="tile">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="muted" style="font-size:12px; text-transform:uppercase;">${v.cat}</div>
+              <h3 style="margin:2px 0 6px; font-size:20px;">${v.brand}</h3>
+            </div>
+            <div style="background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:8px; font-weight:bold; font-size:14px;">${fmt(v.val)}</div>
+          </div>
+          <div class="ok" style="font-size:13px; margin-bottom:12px;">${v.desc}</div>
+          <button class="btn sec" style="margin:0; width:100%;" onclick="initVoucherBuy('${v.id}')">Buy for ${fmt(v.price)}</button>
+        </div>
+      `).join('');
+    }
+
+    function renderMyVouchers() {
+      const c = $('myVouchersContainer');
+      if(state.myVouchers.length === 0) { c.innerHTML = '<div class="status">No vouchers purchased yet.</div>'; return; }
+      
+      c.innerHTML = state.myVouchers.map(mv => {
+        let vDef = state.vouchers.find(x => x.id === mv.vId);
+        return `
+        <div class="tile" style="margin-bottom:12px; flex-direction:row; align-items:center;">
+          <div style="flex:1;">
+            <b style="font-size:16px;">${vDef.brand} Voucher - ${fmt(vDef.val)}</b>
+            <div class="muted" style="font-size:12px; margin-top:4px;">Ref: ${mv.refId} • Date: ${mv.date}</div>
+            <div style="font-size:12px; font-weight:bold; margin-top:4px;" class="${mv.status==='Available'?'ok':mv.status==='Claimed'?'muted':'bad'}">Status: ${mv.status}</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            ${mv.status === 'Available' ? `<button class="btn" style="margin:0; padding:8px 14px; font-size:13px;" onclick="initVoucherClaim('${mv.refId}')">Reveal Code</button>
+                                           <button class="btn danger" style="margin:0; padding:8px 14px; font-size:13px;" onclick="initVoucherRefund('${mv.refId}')">Refund</button>` 
+                                        : `<button class="btn sec" style="margin:0; padding:8px 14px; font-size:13px;" onclick="viewVoucherCode('${mv.refId}')">View Code</button>`}
+          </div>
+        </div>
+      `}).join('');
+      renderRefunds();
+    }
+
+    function renderRefunds() {
+      const c = $('refundsContainer');
+      if(state.refunds.length === 0) { c.innerHTML = '<div class="status">No active refund requests.</div>'; return; }
+      c.innerHTML = state.refunds.map(r => `
+        <div class="tx">
+          <div>
+            <b>${r.brand} Voucher Refund</b><br>
+            <span class="muted" style="font-size:12px;">Refund ID: ${r.rId} • Orig Ref: ${r.refId}</span>
+          </div>
+          <div style="text-align:right;">
+            <b>${fmt(r.val)}</b><br>
+            <span class="${r.status==='Completed'?'ok':'gold'}" style="font-size:12px;">${r.status}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderMissions() {
+      const c = $('missionsContainer');
+      c.innerHTML = state.missions.map(m => {
+        let pct = (m.current / m.target) * 100;
+        return `
+        <div class="tile" style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between;">
+            <h3 style="margin:0;">${m.title}</h3>
+            <div class="badge" style="background:rgba(251,191,36,0.2); color:#fbbf24; margin:0;">Reward: ${m.reward}</div>
+          </div>
+          <p class="muted" style="font-size:13px; margin:6px 0 12px;">${m.desc}</p>
+          <div class="prog-bg" style="height:6px; margin:0 0 12px;"><div class="prog-fill" style="width:${pct}%;"></div></div>
+          
+          ${m.status === 'ready' ? 
+            `<button class="btn" style="margin:0;" onclick="initMissionClaim('${m.id}')">Claim Reward</button>` :
+           m.status === 'claimed' ?
+            `<button class="btn sec" style="margin:0;" disabled>Completed</button>` :
+            `<div style="font-size:13px; font-weight:bold; text-align:right; color:#cbd8ff;">Progress: ${m.current}/${m.target}</div>`
+          }
+        </div>
+      `}).join('');
+    }
+
+    function renderHistory() {
+      const c = $('historyContainer');
+      c.innerHTML = state.history.map(h => `
+        <div class="tx">
+          <div>
+            <b style="font-size:15px;">${h.title}</b><br>
+            <span class="muted" style="font-size:12px;">${h.date} • Ref: ${h.id}</span>
+          </div>
+          <div style="text-align:right;">
+            <b style="font-size:15px; color:${h.amt>0?'#b7ffce':'#fff'};">${h.amt>0?'+':''}${fmt(h.amt)}</b><br>
+            <span class="ok" style="font-size:12px;">${h.status}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Modal / Security System
+    function openModal(html) { $('sheet').innerHTML = html; $('modal').style.display = 'flex'; }
+    function closeModal() { $('modal').style.display = 'none'; updateBal(); }
+    
+    let flowContext = {};
+    
+    function spawnSecureKeypad(title, cost, contextType, dataObj) {
+      flowContext = { type: contextType, data: dataObj, cost: cost, title: title };
+      openModal(`
+        <h2>Secure Authorization</h2>
+        <div class="status" style="text-align: center;">Action: <b>${title}</b><br>Impact: <b class="${cost>0?'bad':'ok'}">${cost>0?fmt(cost):'None'}</b></div>
+        <div class="status" style="background: rgba(5,9,20,0.4); text-align: center;">Enter 4-Digit Security PIN.</div>
+        <div style="text-align:center; font-size:32px; font-weight:1000; letter-spacing:12px; margin:14px 0; color:#60a5fa;" id="pdots">----</div>
+        <input id="hiddenPin" class="hidden" type="hidden" value="" style="display:none;">
+        <div class="pad" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px" id="pinpad">
+          ${[1,2,3,4,5,6,7,8,9,'Clear',0,'Back'].map(k => `<button class="btn sec" type="button" onclick="pressKey('${k}')">${k}</button>`).join('')}
+        </div>
+        <button class="btn" style="margin-top:16px;" onclick="verifyKeypad()">Confirm Sign</button>
+        <button class="btn sec" onclick="closeModal()">Cancel</button>
+      `);
+    }
+
+    function pressKey(val) {
+      const p = $('hiddenPin');
+      if(val==='Clear') p.value='';
+      else if(val==='Back') p.value = p.value.slice(0,-1);
+      else if(p.value.length < 4) p.value += val;
+      $('pdots').textContent = '•'.repeat(p.value.length) + '-'.repeat(4 - p.value.length);
+    }
+
+    function verifyKeypad() {
+      if($('hiddenPin').value.length !== 4) return alert('Enter full 4-digit PIN');
+      runVkycPipeline();
+    }
+
+    function runVkycPipeline() {
+      openModal(`
+        <h2>Processing Security Block</h2>
+        <div class="vkyc-box">
+          <div class="vkyc-bar-bg"><div class="vkyc-bar-fill" id="vkycBar"></div></div>
+          <div class="vkyc-stage" id="vkycStageText">Connecting to secure server...</div>
+        </div>
+      `);
+      
+      const stages = [
+        { p: 20, m: "Verifying cryptographic signature..." },
+        { p: 45, m: "Checking rewards eligibility & limits..." },
+        { p: 70, m: "Generating digital transaction receipt..." },
+        { p: 100, m: "Finalizing ledger execution..." }
+      ];
+      let i = 0;
+      function tick() {
+        if(i < stages.length) {
+          $('vkycBar').style.width = stages[i].p + '%';
+          $('vkycStageText').textContent = stages[i].m;
+          i++; setTimeout(tick, 350);
+        } else {
+          executeFlowContext();
+        }
+      }
+      setTimeout(tick, 200);
+    }
+
+    function executeFlowContext() {
+      const d = flowContext.data;
+      if(flowContext.type === 'BUY_VOUCHER') {
+        state.bal -= flowContext.cost;
+        let r = genId('PX');
+        state.myVouchers.unshift({ refId: r, vId: d.id, date: nowStr(), status: 'Available', code: genId('CODE-') });
+        state.history.unshift({ id: r, title: 'Bought '+d.brand+' Voucher', amt: -flowContext.cost, date: nowStr(), status: 'Successful' });
+        
+        // Mission update hook
+        let m1 = state.missions.find(x => x.id === 'm_1');
+        if(m1 && m1.status === 'active') { m1.current = 1; m1.status = 'ready'; }
+        
+        spawnSuccess('Voucher Purchased', r, `You have successfully bought a ${fmt(d.val)} ${d.brand} voucher.`, true);
+      }
+      else if(flowContext.type === 'CLAIM_VOUCHER') {
+        let mv = state.myVouchers.find(x => x.refId === d);
+        mv.status = 'Claimed';
+        state.history.unshift({ id: genId('CL'), title: 'Claimed Voucher', amt: 0, date: nowStr(), status: 'Successful' });
+        spawnSuccess('Voucher Claimed', d, `Your secret code is:<br><div style="font-size:24px; font-weight:900; letter-spacing:2px; margin:10px 0; color:#fbbf24; background:rgba(0,0,0,0.3); padding:10px; border-radius:12px;">${mv.code}</div>Please use this on the merchant app.`, false);
+      }
+      else if(flowContext.type === 'REFUND_VOUCHER') {
+        let mv = state.myVouchers.find(x => x.refId === d);
+        let vDef = state.vouchers.find(x => x.id === mv.vId);
+        mv.status = 'Refunded';
+        state.bal += vDef.price;
+        let rId = genId('RF');
+        state.refunds.unshift({ rId: rId, refId: d, brand: vDef.brand, val: vDef.price, date: nowStr(), status: 'Completed' });
+        state.history.unshift({ id: rId, title: 'Refund '+vDef.brand+' Voucher', amt: vDef.price, date: nowStr(), status: 'Refunded' });
+        spawnSuccess('Refund Processed', rId, `Amount ${fmt(vDef.price)} has been returned to your bank balance.`, false);
+      }
+      else if(flowContext.type === 'CLAIM_SCRATCH') {
+        let sc = state.scratchCards.find(x => x.id === d.id);
+        sc.status = 'claimed';
+        let txt = '';
+        if(sc.type === 'cash') { state.bal += sc.val; state.ltcb += sc.val; txt = `${sc.val} Cashback added to account.`; }
+        else { state.rp += sc.val; txt = `${sc.val} Reward Points added.`; }
+        state.history.unshift({ id: genId('SC'), title: 'Scratch Card Reward', amt: sc.type==='cash'?sc.val:0, date: nowStr(), status: 'Claimed' });
+        spawnSuccess('Reward Claimed', genId('RW'), txt, false);
+      }
+      else if(flowContext.type === 'CLAIM_MISSION') {
+        let m = state.missions.find(x => x.id === d);
+        m.status = 'claimed';
+        let rTxt = m.reward;
+        if(rTxt.includes('Cashback')) { state.bal += 25; state.ltcb += 25; state.history.unshift({ id: genId('MS'), title: 'Mission Cashback', amt: 25, date: nowStr(), status: 'Claimed' }); }
+        else if(rTxt.includes('Points')) { state.rp += 100; state.history.unshift({ id: genId('MS'), title: 'Mission Points', amt: 0, date: nowStr(), status: 'Claimed' }); }
+        else { state.scratchCards.unshift({ id: genId('sc_'), type: 'cash', val: 50, status: 'unscratched' }); }
+        spawnSuccess('Mission Accomplished', genId('MA'), `Reward processed: ${m.reward}`, false);
+      }
+      
+      renderAll();
+    }
+
+    function spawnSuccess(title, refId, details, showReceiptBtn) {
+      openModal(`
+        <div class="successHero slideIn">
+          <div class="bigTick"></div>
+          <h2>${title}</h2>
+        </div>
+        <div class="receipt">
+          <div class="rline"><span>Reference ID</span><span style="font-family:monospace;">${refId}</span></div>
+          <div class="rline"><span>Date & Time</span><b>${nowStr()}</b></div>
+          <div class="rline" style="border:0; padding-bottom:0; flex-direction:column;">
+            <span>Details</span>
+            <span style="margin-top:6px;">${details}</span>
+          </div>
+        </div>
+        <button class="btn" onclick="closeModal()">Done</button>
+        ${showReceiptBtn ? `<button class="btn sec" onclick="alert('Receipt downloaded to device securely.')">Download Receipt</button>` : ''}
+      `);
+    }
+
+    // Specific Flow Initiators
+    function initVoucherBuy(vId) {
+      let v = state.vouchers.find(x => x.id === vId);
+      if(v.price > state.bal) return alert('Insufficient Pluxee Bank balance.');
+      spawnSecureKeypad(`Buy ${v.brand} Voucher`, v.price, 'BUY_VOUCHER', v);
+    }
+    
+    function initVoucherClaim(refId) { spawnSecureKeypad('Reveal Secret Code', 0, 'CLAIM_VOUCHER', refId); }
+    function initVoucherRefund(refId) { spawnSecureKeypad('Request Buyer Protection Refund', 0, 'REFUND_VOUCHER', refId); }
+    function initMissionClaim(mId) { spawnSecureKeypad('Claim Mission Reward', 0, 'CLAIM_MISSION', mId); }
+    
+    function viewVoucherCode(refId) {
+      let mv = state.myVouchers.find(x => x.refId === refId);
+      openModal(`
+        <h2>Secret Code View</h2>
+        <div class="status" style="text-align:center;">
+          <div style="font-size:24px; font-weight:900; letter-spacing:2px; margin:10px 0; color:#fbbf24;">${mv.code}</div>
+          Redeem directly at merchant checkout.
+        </div>
+        <button class="btn" onclick="closeModal()">Close</button>
+      `);
+    }
+
+    function handleDailyCheckin() {
+      if(state.checkedInToday) return alert('Already checked in today!');
+      state.checkedInToday = true;
+      state.rp += 10;
+      alert('10 Reward Points added for Daily Check-In!');
+      updateBal();
+    }
+
+    function openScratchModal(id) {
+      let sc = state.scratchCards.find(x => x.id === id);
+      if(sc.status !== 'unscratched') return;
+      openModal(`
+        <h2>Scratch & Win</h2>
+        <div class="status">Tap the card below to reveal your surprise ecosystem reward.</div>
+        <div class="s-card" id="activeScratchCard" style="width: 250px; height: 250px; margin: 20px auto; font-size:24px;" onclick="performScratch('${id}')">
+          <div class="s-cover" style="font-size:18px;"></div>
+          <div class="s-content hidden-content" style="opacity:0; transition:opacity 0.6s 0.3s; transform:scale(0.8);">
+            <div style="font-size:50px; margin-bottom:10px;"></div>
+            <b style="font-size:28px; color:#b7ffce;">${sc.type==='cash'?fmt(sc.val):sc.val+' Pts'}</b>
+            <div class="muted" style="font-size:14px; margin-top:8px;">${sc.type==='cash'?'Cashback':'Reward Points'}</div>
+          </div>
+        </div>
+        <button class="btn sec" id="scClaimBtn" style="display:none;" onclick="initScratchClaim('${id}')">Claim to Bank Ledger</button>
+        <button class="btn sec" id="scCancelBtn" onclick="closeModal()">Back to Rewards</button>
+      `);
+    }
+
+    function performScratch(id) {
+      const card = $('activeScratchCard');
+      card.classList.add('revealed');
+      card.querySelector('.hidden-content').style.opacity = '1';
+      card.querySelector('.hidden-content').style.transform = 'scale(1)';
+      setTimeout(() => {
+        $('scClaimBtn').style.display = 'block';
+        $('scCancelBtn').style.display = 'none';
+      }, 800);
+    }
+    
+    function initScratchClaim(id) {
+      let sc = state.scratchCards.find(x => x.id === id);
+      spawnSecureKeypad('Claim Scratch Reward', 0, 'CLAIM_SCRATCH', sc);
+    }
+
+    function renderAll() {
+      updateBal();
+      renderScratchCards();
+      renderVouchersStore();
+      renderMyVouchers();
+      renderMissions();
+      renderHistory();
+    }
+
+    // Init
+    renderAll();
+  </script>
+</body>
+</html>
+
+```
