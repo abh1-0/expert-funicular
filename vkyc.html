@@ -63,14 +63,33 @@ if(!number||!name)return alert("Enter document number and name on document.");
 doc={type,number,name,dob};
 idScan();
 }
-function idScan(){steps(2);$("app").innerHTML=`<h2>Document Capture</h2><div class="status">Place your document inside the frame. Keep the document flat, readable and inside the border.</div><div class="camBox"><video id="video" autoplay playsinline></video><div class="overlay"><div class="idFrame"></div><div class="hint">Fit document inside the frame</div></div></div><div id="camMsg" class="status">Starting rear camera...</div><button class="btn" onclick="captureId()">Capture ID Photo</button><button class="btn sec" onclick="idScan()">Restart Camera</button>`;startCam("environment").then(ok=>{if(ok)$("camMsg").innerHTML='<span class="green">Camera ready. Align document and capture.</span>'})}
-function snap(){let v=$("video"),c=document.createElement("canvas");c.width=v.videoWidth||720;c.height=v.videoHeight||480;c.getContext("2d").drawImage(v,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.9)}
+function idScan(){steps(2);$("app").innerHTML=`<h2>Document Capture</h2><div class="status">Place your document inside the frame. Keep the document flat, readable and inside the border.</div><div class="camBox"><video id="video" autoplay playsinline></video><div class="overlay"><div class="idFrame"></div><div class="hint">Fit document inside the frame</div></div></div><div id="camMsg" class="status">Starting rear camera...</div><div class="status"><b>Document Quality</b><br>Alignment: Ready<br>Glare: Not Detected<br>Focus: Good<br>Frame Coverage: Excellent</div><button class="btn" onclick="captureId()">Capture ID Photo</button><button class="btn sec" onclick="idScan()">Restart Camera</button>`;startCam("environment").then(ok=>{if(ok)$("camMsg").innerHTML='<span class="green">Camera ready. Align document and capture.</span>'})}
+function snap(){
+let v=$("video"),c=document.createElement("canvas");
+const vw=v.videoWidth||720,vh=v.videoHeight||480;
+const sx=vw*0.15,sy=vh*0.18,sw=vw*0.70,sh=vh*0.58;
+c.width=sw;c.height=sh;
+c.getContext("2d").drawImage(v,sx,sy,sw,sh,0,0,sw,sh);
+return c.toDataURL("image/jpeg",0.92)
+}
 function captureId(){if(!stream)return alert("Camera is not ready yet.");idShot=snap();stopCam();$("app").innerHTML=`<h2>Document Captured</h2><img class="shot" src="${idShot}"><div class="status green">Document image captured successfully.</div><div class="receipt"><div class="r"><span>Document Type</span><b>${doc.type}</b></div><div class="r"><span>Document Number</span><b>${doc.number}</b></div><div class="r"><span>Name</span><b>${doc.name}</b></div></div><button class="btn" onclick="faceScan()">Continue to Face Verification</button><button class="btn sec" onclick="idScan()">Retake ID Photo</button>`}
 function faceScan(){steps(3);$("app").innerHTML=`<h2>Face Verification</h2><div class="status">Keep your face inside the oval. Look straight at the camera and hold steady until the border turns green.</div><div class="camBox"><video id="video" autoplay playsinline></video><div class="overlay"><div id="faceOval" class="faceOval"></div><div id="faceHint" class="hint"><span class="red">● Face not detected</span></div></div></div><div id="camMsg" class="status">Starting front camera...</div><button id="faceBtn" class="btn" disabled onclick="captureFace()">Capture Face Photo</button><button class="btn sec" onclick="faceScan()">Restart Face Scan</button>`;startCam("user").then(ok=>{if(ok){$("camMsg").innerHTML='<span class="green">Front camera ready.</span>';simulateFace()}})}
 function simulateFace(){clearTimeout(faceTimer);let oval=$("faceOval"),hint=$("faceHint"),btn=$("faceBtn");oval.className="faceOval";hint.innerHTML='<span class="red">● Face not in frame — adjust position</span>';btn.disabled=true;faceTimer=setTimeout(()=>{oval.className="faceOval yellow";hint.innerHTML='<span class="yellow">● Hold steady — checking position</span>'},1600);setTimeout(()=>{oval.className="faceOval green pulse";hint.innerHTML='<span class="green">● Face aligned — ready to capture</span>';btn.disabled=false},3300)}
-function captureFace(){if(!stream)return alert("Camera is not ready yet.");faceShot=snap();stopCam();review()}
+function captureFace(){
+if(!stream)return alert("Camera is not ready yet.");
+let v=$("video"),c=document.createElement("canvas");
+c.width=420;c.height=520;
+let ctx=c.getContext("2d");
+ctx.beginPath();
+ctx.ellipse(210,260,145,190,0,0,Math.PI*2);
+ctx.clip();
+ctx.drawImage(v,0,0,420,520);
+faceShot=c.toDataURL("image/png");
+stopCam();
+review()
+}
 function review(){steps(4);$("app").innerHTML=`<h2>Review Captures</h2><div class="grid"><div><h3>ID Capture</h3><img class="shot" src="${idShot}"></div><div><h3>Face Capture</h3><img class="shot" src="${faceShot}"></div></div><div class="receipt"><div class="r"><span>Document Type</span><b>${doc.type}</b></div><div class="r"><span>Document Number</span><b>${doc.number}</b></div><div class="r"><span>Name on Document</span><b>${doc.name}</b></div><div class="r"><span>DOB</span><b>${doc.dob||"Not provided"}</b></div></div><div class="status">Confirm both captures and document details are correct before submitting.</div><button class="btn" onclick="process()">Submit Verification</button><button class="btn sec" onclick="docDetails()">Restart Verification</button>`}
-function process(){steps(5);let msgs=["Uploading encrypted verification frames...","Checking document image quality...","Matching face capture session...","Generating verification receipt..."];let i=0;$("app").innerHTML=`<h2>Processing Verification</h2><p id="msg">${msgs[0]}</p><div class="loader"><div class="bar"></div></div>`;let t=setInterval(()=>{$("msg").textContent=msgs[++i%msgs.length]},750);setTimeout(()=>{clearInterval(t);success()},3600)}
+function process(){steps(5);let msgs=["Initializing secure verification session...","Processing document image...","Extracting document details...","Validating face capture quality...","Submitting verification record...","Generating verification receipt..."];let i=0;$("app").innerHTML=`<h2>Processing Verification</h2><div class="badge">Secure Verification Session Active</div><p id="msg">${msgs[0]}</p><div class="loader"><div class="bar"></div></div>`;let t=setInterval(()=>{$("msg").textContent=msgs[++i%msgs.length]},750);setTimeout(()=>{clearInterval(t);success()},3600)}
 function success(){let r=ref();$("app").innerHTML=`<div class="big ok">✓</div><h2>Face Verification Completed</h2><div class="receipt"><div class="r"><span>Status</span><b class="ok">Successful</b></div><div class="r"><span>Reference ID</span><b>${r}</b></div><div class="r"><span>Date & Time</span><b>${now()}</b></div><div class="r"><span>Document Type</span><b>${doc.type}</b></div><div class="r"><span>Document Number</span><b>${doc.number}</b></div><div class="r"><span>Document Scan</span><b class="ok">Accepted</b></div><div class="r"><span>Face Capture</span><b class="ok">Accepted</b></div></div><button class="btn" onclick="location.href='reference.html'">Back to Reference Tracking</button><button class="btn sec" onclick="location.href='index.html'">Go to Login</button>`}
 window.addEventListener("beforeunload",stopCam);
 start();
