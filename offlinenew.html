@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Pluxee Bank" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Branch Account Opening - Pluxee Bank</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #2147d8 0, #08152f 42%, #050914 100%);
+      color: #eaf1ff; padding: 18px;
+    }
+    .top { max-width: 430px; margin: 0 auto 14px; text-align: center; }
+    .brand {
+      width: 74px; height: 74px; border-radius: 24px; margin: auto; display: grid;
+      place-items: center; background: linear-gradient(135deg, #ffffff, #b9ccff);
+      color: #1237a8; font-size: 36px; font-weight: 1000; box-shadow: 0 18px 45px #0008;
+    }
+    .sub { margin-top: 10px; color: #b9c8ef; font-size: 14px; font-weight: 700; }
+    .wrap { width: 100%; max-width: 430px; margin: auto; }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 25px 70px #0009; border-radius: 30px; padding: 22px; margin: 14px 0;
+      backdrop-filter: blur(18px);
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 26px; }
+    .hero p { margin: 0; color: #c8d6ff; line-height: 1.4; font-size: 15px; }
+    
+    .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .input, select, textarea {
+      width: 100%; border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.12);
+      color: #fff; border-radius: 16px; padding: 15px; font-size: 16px; margin: 7px 0 12px; outline: none;
+    }
+    .input::placeholder, textarea::placeholder { color: #93a4cc; }
+    select option { color: #111827; }
+    .input:focus, select:focus, textarea:focus {
+      border-color: #9bb8ff; box-shadow: 0 0 0 4px rgba(99, 132, 255, 0.22);
+    }
+    label { display: block; font-size: 13px; font-weight: 900; color: #cbd8ff; margin: 8px 0 4px; }
+    
+    .btn {
+      width: 100%; border: 0; border-radius: 17px; padding: 15px; margin-top: 10px;
+      font-size: 16px; font-weight: 1000; background: linear-gradient(135deg, #ffffff, #dbe7ff);
+      color: #1237a8; box-shadow: 0 14px 30px #0005; transition: transform 0.2s, background 0.2s;
+    }
+    .btn:active { transform: scale(0.96); }
+    .sec {
+      background: rgba(255, 255, 255, 0.12); color: #eaf1ff;
+      border: 1px solid rgba(255, 255, 255, 0.16); box-shadow: none;
+    }
+    
+    .help, .status {
+      background: rgba(0, 0, 0, 0.22); border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px; padding: 13px; color: #cbd8ff; font-size: 14px; margin: 8px 0;
+    }
+    .info-card {
+      background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(0,0,0,0.2));
+      border: 1px solid rgba(96,165,250,0.3); border-radius: 22px; padding: 16px; margin-bottom: 14px;
+    }
+    .info-card h3 { margin: 0 0 8px 0; color: #9bb8ff; font-size: 16px; }
+    .info-card ul { margin: 0; padding-left: 20px; font-size: 14px; color: #eaf1ff; line-height: 1.5; }
+    
+    .ok { color: #b7ffce; font-weight: 1000; }
+    .bad { color: #ffb4b4; font-weight: 1000; }
+    
+    .steps { display: flex; overflow-x: auto; gap: 7px; margin: 12px 0; padding-bottom: 8px; scrollbar-width: none; }
+    .steps::-webkit-scrollbar { display: none; }
+    .step {
+      min-width: max-content; padding: 10px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12); text-align: center; font-size: 12px; font-weight: 900; color: #b9c8ef;
+    }
+    .step.on { background: #fff; color: #143aa8; }
+    .step.done { background: rgba(34, 197, 94, 0.18); color: #b7ffce; border-color: rgba(34, 197, 94, 0.4); }
+    
+    .hidden { display: none !important; }
+    
+    .bar { height: 10px; background: rgba(255, 255, 255, 0.12); border-radius: 99px; overflow: hidden; margin-top: 14px; }
+    .bar span { display: block; height: 100%; width: 0; background: #fff; transition: width 0.3s ease; }
+    
+    .actions {
+      position: sticky; bottom: 0; background: rgba(5, 9, 20, 0.82); backdrop-filter: blur(18px);
+      padding: 12px; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 24px; margin-top: 14px; z-index: 10;
+    }
+    
+    /* Account Cards */
+    .acc-card {
+      background: rgba(0, 0, 0, 0.22); border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: 0.2s;
+    }
+    .acc-card h3 { margin: 0 0 6px 0; font-size: 18px; color: #fff; }
+    .acc-card p { margin: 0 0 8px 0; font-size: 13px; color: #93a4cc; }
+    .acc-card ul { margin: 0; padding-left: 18px; font-size: 13px; color: #cbd8ff; line-height: 1.5; }
+    .acc-card.selected {
+      background: rgba(37, 99, 235, 0.2); border-color: #60a5fa; box-shadow: 0 0 15px rgba(96, 165, 250, 0.2);
+    }
+    
+    /* Time Slots */
+    .slot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+    .slot-btn {
+      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer;
+      font-size: 14px; font-weight: bold; transition: 0.2s; color: #eaf1ff;
+    }
+    .slot-btn.selected { background: #fff; color: #1237a8; border-color: #fff; }
+    
+    /* Modals & Loaders */
+    .modal {
+      display: none; position: fixed; inset: 0; background: #000a; z-index: 50;
+      align-items: flex-end; justify-content: center; padding: 0; backdrop-filter: blur(5px);
+    }
+    .sheet {
+      background: #08152f; color: #eaf1ff; border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 28px 28px 0 0; max-width: 460px; width: 100%; padding: 24px;
+      max-height: 92vh; overflow-y: auto; animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    
+    .vkyc-box { margin: 24px 0; }
+    .vkyc-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 99px; overflow: hidden; margin-bottom: 12px; }
+    .vkyc-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #2563eb, #7c3aed); border-radius: 99px; transition: width 0.3s ease; }
+    .vkyc-stage { font-size: 15px; font-weight: bold; text-align: center; color: #cbd8ff; }
+    
+    .successHero { text-align: center; }
+    .bigTick {
+      width: 82px; height: 82px; border-radius: 50%; margin: 8px auto 14px;
+      background: rgba(34, 197, 94, 0.18); border: 1px solid rgba(183, 255, 206, 0.45);
+      display: grid; place-items: center; font-size: 46px; color: #b7ffce; animation: pop 0.4s ease;
+    }
+    @keyframes pop { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    
+    .receipt {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px; padding: 16px; margin: 16px 0;
+    }
+    .rline {
+      display: flex; justify-content: space-between; gap: 12px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.14); padding: 10px 0; font-size: 14px;
+    }
+    .rline:last-child { border-bottom: 0; }
+    
+    @media (min-width: 760px) {
+      .modal { align-items: center; }
+      .sheet { border-radius: 28px; animation: pop 0.3s ease; }
+      .wrap, .top { max-width: 760px; }
+      .grid { grid-template-columns: 1fr 1fr; }
+      .actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .actions .status { grid-column: 1 / -1; }
+      .btn { margin-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">P</div>
+    <div class="sub">Pluxee Bank • Branch Account Opening</div>
+  </header>
+  
+  <main class="wrap">
+    <section class="card hero">
+      <h1>🏦 Branch Account Opening</h1>
+      <p>Open your account by visiting a Pluxee Bank branch. Complete this application to schedule your priority appointment. No Video KYC required online.</p>
+      <div class="bar"><span id="prog"></span></div>
+    </section>
+    
+    <section class="steps" id="steps"></section>
+    
+    <section id="formArea"></section>
+    
+    <section class="actions">
+      <button id="prev" class="btn sec hidden">Previous</button>
+      <button id="next" class="btn">Next Step</button>
+      <button id="submit" class="btn hidden">Submit Application</button>
+      <button id="home" class="btn sec">Back to Login</button>
+      <div id="msg" class="status">Start with applicant details.</div>
+    </section>
+
+    <div style="margin-top: 30px;">
+      <div class="info-card">
+        <h3>💡 Application Tips</h3>
+        <ul>
+          <li>Ensure the name matches exactly with your official documents.</li>
+          <li>Save your reference number immediately after generation.</li>
+          <li>You can reschedule your appointment later using the Track Application portal.</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>⏱️ Estimated Processing Time</h3>
+        <p style="margin:0; font-size:14px; color:#cbd8ff;">Branch verification typically takes 10-15 minutes. Your account and internet banking credentials will be activated instantly upon successful biometric verification at the branch.</p>
+      </div>
+      <div class="info-card" style="border-color: rgba(255,255,255,0.1); background: rgba(0,0,0,0.2);">
+        <h3>❓ Need Help?</h3>
+        <p style="margin:0; font-size:14px; color:#cbd8ff;">Contact Pluxee Support at 1800-PLUXEE-BANK or email priority@pluxee.bank for assistance.</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="modal" class="modal"><div id="sheet" class="sheet"></div></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  
+  let page = 0;
+  const pages = ['Applicant', 'Address', 'Account Type', 'Nominee', 'Branch', 'Appointment', 'Documents'];
+  const verified = new Array(pages.length).fill(false);
+  
+  // State for selections
+  let selectedAccount = null;
+  let selectedTimeSlot = null;
+  const formData = {};
+
+  function generateRef() { return 'PBAO' + Math.floor(100000 + Math.random() * 900000); }
+  function openModal(html) { $('sheet').innerHTML = html; $('modal').style.display = 'flex'; }
+  function closeModal() { $('modal').style.display = 'none'; }
+
+  // VKYC-Style Animated Loader
+  function loadingFlow(doneCallback) {
+    openModal(`
+      <h2>Processing Application</h2>
+      <div class="vkyc-box">
+        <div class="vkyc-bar-bg">
+          <div class="vkyc-bar-fill" id="vkycBar"></div>
+        </div>
+        <div class="vkyc-stage" id="vkycStageText">Creating Application...</div>
+      </div>
+      <div class="status" style="text-align:center; font-size:13px;">Please do not refresh the page.</div>
+    `);
+
+    const stages = [
+      { text: 'Creating Application...', pct: 15 },
+      { text: 'Assigning Branch Allocations...', pct: 35 },
+      { text: 'Scheduling Appointment Slot...', pct: 60 },
+      { text: 'Generating Reference Number...', pct: 85 },
+      { text: 'Preparing Application Slip...', pct: 100 }
+    ];
+
+    let i = 0;
+    function tick() {
+      if (i < stages.length) {
+        $('vkycBar').style.width = stages[i].pct + '%';
+        $('vkycStageText').textContent = stages[i].text;
+        i++;
+        setTimeout(tick, 600);
+      } else {
+        setTimeout(doneCallback, 400);
+      }
+    }
+    setTimeout(tick, 200);
+  }
+
+  function renderSteps() {
+    $('steps').innerHTML = pages.map((p, i) => 
+      `<div class="step ${i === page ? 'on' : (verified[i] ? 'done' : '')}">${i + 1}. ${p}</div>`
+    ).join('');
+    $('prog').style.width = ((page + 1) / pages.length * 100) + '%';
+    // Scroll active step into view on mobile
+    const activeStep = document.querySelector('.step.on');
+    if (activeStep) activeStep.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+
+  const templates = [
+    // 0: Applicant Details
+    () => `
+      <section class="card">
+        <h2>1. Applicant Details</h2>
+        <div class="grid">
+          <div>
+            <label>Full Name (As per ID Proof)</label>
+            <input id="f_name" class="input" placeholder="Enter full name" value="${formData.name || ''}">
+            <label>Date of Birth</label>
+            <input id="f_dob" type="date" class="input" value="${formData.dob || ''}">
+          </div>
+          <div>
+            <label>Mobile Number</label>
+            <input id="f_mob" class="input" inputmode="numeric" placeholder="10 digit mobile" value="${formData.mob || ''}">
+            <label>Email Address</label>
+            <input id="f_email" class="input" type="email" placeholder="email@example.com" value="${formData.email || ''}">
+          </div>
+        </div>
+      </section>
+    `,
+    // 1: Residential Address
+    () => `
+      <section class="card">
+        <h2>2. Residential Address</h2>
+        <div class="grid">
+          <div>
+            <label>House / Flat Number</label>
+            <input id="f_house" class="input" placeholder="e.g. Flat 201, Tower B" value="${formData.house || ''}">
+            <label>Street / Colony</label>
+            <input id="f_street" class="input" placeholder="e.g. Main Road" value="${formData.street || ''}">
+            <label>Area / Locality</label>
+            <input id="f_area" class="input" placeholder="e.g. Banjara Hills" value="${formData.area || ''}">
+          </div>
+          <div>
+            <label>City</label>
+            <input id="f_city" class="input" placeholder="City" value="${formData.city || ''}">
+            <label>State</label>
+            <input id="f_state" class="input" placeholder="State" value="${formData.state || ''}">
+            <label>PIN Code</label>
+            <input id="f_pin" class="input" inputmode="numeric" placeholder="6 digit PIN" value="${formData.pin || ''}">
+          </div>
+        </div>
+      </section>
+    `,
+    // 2: Account Type
+    () => `
+      <section class="card">
+        <h2>3. Choose Account Type</h2>
+        <div class="help">Select the account that best fits your financial needs.</div>
+        
+        <div class="acc-card ${selectedAccount === 'Everyday Savings Account' ? 'selected' : ''}" onclick="selectAccount('Everyday Savings Account')">
+          <h3>🏦 Everyday Savings Account</h3>
+          <p>Standard banking services with essential features.</p>
+          <ul>
+            <li>Zero minimum balance required</li>
+            <li>Free standard debit card</li>
+            <li>Standard UPI daily limits</li>
+          </ul>
+        </div>
+
+        <div class="acc-card ${selectedAccount === 'Student Advantage Account' ? 'selected' : ''}" onclick="selectAccount('Student Advantage Account')">
+          <h3>🎓 Student Advantage Account</h3>
+          <p>Designed for young adults aged 18-25.</p>
+          <ul>
+            <li>Free IMPS/NEFT transfers</li>
+            <li>Exclusive cashback on streaming & food apps</li>
+            <li>Zero maintenance charges</li>
+          </ul>
+        </div>
+
+        <div class="acc-card ${selectedAccount === 'Corporate Salary Account' ? 'selected' : ''}" onclick="selectAccount('Corporate Salary Account')">
+          <h3>💼 Corporate Salary Account</h3>
+          <p>Premium perks for salaried professionals.</p>
+          <ul>
+            <li>Free premium Visa Signature debit card</li>
+            <li>Complimentary airport lounge access</li>
+            <li>Overdraft facility available</li>
+          </ul>
+        </div>
+
+        <div class="acc-card ${selectedAccount === 'Pluxee Premium Savings' ? 'selected' : ''}" onclick="selectAccount('Pluxee Premium Savings')">
+          <h3>💎 Pluxee Premium Savings</h3>
+          <p>High-yield savings with dedicated support.</p>
+          <ul>
+            <li>Higher interest rate on balances above ₹1 Lakh</li>
+            <li>Dedicated relationship manager</li>
+            <li>Priority branch service routing</li>
+          </ul>
+        </div>
+
+        <div class="acc-card ${selectedAccount === 'Senior Citizen Account' ? 'selected' : ''}" onclick="selectAccount('Senior Citizen Account')">
+          <h3>👵 Senior Citizen Account</h3>
+          <p>Special privileges for individuals aged 60+.</p>
+          <ul>
+            <li>0.5% extra interest on Fixed Deposits</li>
+            <li>Free personalized chequebook</li>
+            <li>Complimentary medical insurance cover</li>
+          </ul>
+        </div>
+      </section>
+    `,
+    // 3: Nominee Details
+    () => `
+      <section class="card">
+        <h2>4. Nominee Details</h2>
+        <div class="help">Ensure your funds are protected by adding a nominee.</div>
+        <div class="grid">
+          <div>
+            <label>Nominee Full Name</label>
+            <input id="f_nom_name" class="input" placeholder="Enter nominee name" value="${formData.nom_name || ''}">
+          </div>
+          <div>
+            <label>Relationship</label>
+            <select id="f_nom_rel" class="input">
+              <option value="">Select Relationship</option>
+              <option value="Parent" ${formData.nom_rel === 'Parent' ? 'selected' : ''}>Parent</option>
+              <option value="Spouse" ${formData.nom_rel === 'Spouse' ? 'selected' : ''}>Spouse</option>
+              <option value="Sibling" ${formData.nom_rel === 'Sibling' ? 'selected' : ''}>Sibling</option>
+              <option value="Child" ${formData.nom_rel === 'Child' ? 'selected' : ''}>Child</option>
+              <option value="Other" ${formData.nom_rel === 'Other' ? 'selected' : ''}>Other</option>
+            </select>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label>Nominee Mobile Number</label>
+            <input id="f_nom_mob" class="input" inputmode="numeric" placeholder="10 digit mobile" value="${formData.nom_mob || ''}">
+          </div>
+        </div>
+      </section>
+    `,
+    // 4: Branch Selection
+    () => `
+      <section class="card">
+        <h2>5. Branch Selection</h2>
+        <div class="help">Choose a convenient branch for your biometric verification and kit collection.</div>
+        <label>Preferred Pluxee Bank Branch</label>
+        <select id="f_branch" class="input">
+          <option value="">Select a branch</option>
+          <option value="Dilsukhnagar Branch" ${formData.branch === 'Dilsukhnagar Branch' ? 'selected' : ''}>Dilsukhnagar Branch</option>
+          <option value="Malakpet Branch" ${formData.branch === 'Malakpet Branch' ? 'selected' : ''}>Malakpet Branch</option>
+          <option value="Koti Branch" ${formData.branch === 'Koti Branch' ? 'selected' : ''}>Koti Branch</option>
+          <option value="Hyderabad Main Branch" ${formData.branch === 'Hyderabad Main Branch' ? 'selected' : ''}>Hyderabad Main Branch</option>
+          <option value="LB Nagar Branch" ${formData.branch === 'LB Nagar Branch' ? 'selected' : ''}>LB Nagar Branch</option>
+        </select>
+        
+        <div class="status" style="margin-top: 15px;">
+          <b>Note:</b> You can only complete your account opening at the branch you select here.
+        </div>
+      </section>
+    `,
+    // 5: Appointment Booking
+    () => `
+      <section class="card">
+        <h2>6. Appointment Booking</h2>
+        <div class="grid">
+          <div style="grid-column: 1 / -1;">
+            <label>Preferred Date of Visit</label>
+            <input id="f_date" type="date" class="input" value="${formData.date || ''}">
+          </div>
+        </div>
+        
+        <label>Select Time Slot</label>
+        <div class="slot-grid">
+          ${['10:00 AM', '11:00 AM', '12:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'].map(time => `
+            <div class="slot-btn ${selectedTimeSlot === time ? 'selected' : ''}" onclick="selectSlot('${time}')">${time}</div>
+          `).join('')}
+        </div>
+      </section>
+    `,
+    // 6: Documents & Review
+    () => `
+      <section class="card">
+        <h2>7. Documents Required</h2>
+        <div class="help">Please carry the original and one photocopy of the following documents to the branch.</div>
+        
+        <div class="info-card" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.15);">
+          <ul style="list-style-type: '👉 ';">
+            <li>Aadhaar Card (Original & Copy)</li>
+            <li>Permanent Account Number (PAN) Card</li>
+            <li>2 Recent Passport Size Photographs</li>
+            <li>Black Pen for Signature</li>
+            <li>Student ID Card (If Student Account selected)</li>
+          </ul>
+        </div>
+
+        <div class="status" style="margin-top:20px;">
+          <b>Summary:</b><br>
+          Branch: ${formData.branch || 'Not selected'}<br>
+          Date: ${formData.date || 'Not selected'}<br>
+          Time: ${selectedTimeSlot || 'Not selected'}
+        </div>
+        
+        <label style="margin-top:15px; font-size:14px; display:flex; gap:10px; align-items:center;">
+          <input type="checkbox" id="f_terms" style="width:20px; height:20px;">
+          I confirm that the details provided are accurate and I will carry the required documents to the branch.
+        </label>
+      </section>
+    `
+  ];
+
+  function selectAccount(type) {
+    selectedAccount = type;
+    render();
+  }
+
+  function selectSlot(time) {
+    selectedTimeSlot = time;
+    render();
+  }
+
+  // Save current step data to memory
+  function saveCurrentStepData() {
+    if (page === 0) {
+      formData.name = $('f_name').value;
+      formData.dob = $('f_dob').value;
+      formData.mob = $('f_mob').value;
+      formData.email = $('f_email').value;
+    } else if (page === 1) {
+      formData.house = $('f_house').value;
+      formData.street = $('f_street').value;
+      formData.area = $('f_area').value;
+      formData.city = $('f_city').value;
+      formData.state = $('f_state').value;
+      formData.pin = $('f_pin').value;
+    } else if (page === 3) {
+      formData.nom_name = $('f_nom_name').value;
+      formData.nom_rel = $('f_nom_rel').value;
+      formData.nom_mob = $('f_nom_mob').value;
+    } else if (page === 4) {
+      formData.branch = $('f_branch').value;
+    } else if (page === 5) {
+      formData.date = $('f_date').value;
+    }
+  }
+
+  function validateStep() {
+    saveCurrentStepData();
+    let ok = true;
+    let err = '';
+
+    if (page === 0) {
+      ok = formData.name && formData.dob && formData.mob && formData.email;
+      err = 'Please fill all applicant details.';
+    } else if (page === 1) {
+      ok = formData.house && formData.street && formData.area && formData.city && formData.state && formData.pin;
+      err = 'Please fill out your complete residential address.';
+    } else if (page === 2) {
+      ok = selectedAccount !== null;
+      err = 'Please select an account type to proceed.';
+    } else if (page === 3) {
+      ok = formData.nom_name && formData.nom_rel && formData.nom_mob;
+      err = 'Please fill all nominee details.';
+    } else if (page === 4) {
+      ok = formData.branch !== '';
+      err = 'Please select a preferred branch.';
+    } else if (page === 5) {
+      ok = formData.date && selectedTimeSlot !== null;
+      err = 'Please select an appointment date and time slot.';
+    } else if (page === 6) {
+      ok = $('f_terms').checked;
+      err = 'You must accept the confirmation declaration.';
+    }
+
+    if (!ok) {
+      $('msg').innerHTML = `<b class="bad">${err}</b>`;
+      return false;
+    }
+    
+    verified[page] = true;
+    return true;
+  }
+
+  function render() {
+    renderSteps();
+    $('prev').classList.toggle('hidden', page === 0);
+    
+    if (page === pages.length - 1) {
+      $('next').classList.add('hidden');
+      $('submit').classList.remove('hidden');
+    } else {
+      $('next').classList.remove('hidden');
+      $('submit').classList.add('hidden');
+    }
+    
+    $('formArea').innerHTML = templates[page]();
+    $('msg').innerHTML = 'Complete this section to proceed.';
+  }
+
+  function showSuccessScreen() {
+    const refNum = generateRef();
+    openModal(`
+      <div class="successHero slideIn">
+        <div class="bigTick">✓</div>
+        <h2>Application Processed</h2>
+        <div class="muted">Please visit the branch at your scheduled time.</div>
+      </div>
+      
+      <div class="receipt">
+        <div style="text-align:center; font-weight:900; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">APPLICATION SLIP</div>
+        <div class="rline"><span>Reference No.</span><b style="font-family:monospace; font-size:16px; color:#fbbf24;">${refNum}</b></div>
+        <div class="rline"><span>Applicant Name</span><b>${formData.name}</b></div>
+        <div class="rline"><span>Account Type</span><b>${selectedAccount}</b></div>
+        <div class="rline"><span>Branch</span><b>${formData.branch}</b></div>
+        <div class="rline"><span>Appointment</span><b>${formData.date} | ${selectedTimeSlot}</b></div>
+        <div class="rline"><span>Status</span><b class="ok">Awaiting Branch Visit</b></div>
+      </div>
+      
+      <button class="btn" onclick="location.href='reference.html?ref=${refNum}'">Track Application</button>
+      <button class="btn sec" onclick="alert('Application Slip Downloaded Successfully.')">Download Acknowledgement</button>
+      <button class="btn sec" onclick="location.href='index.html'">Back to Login</button>
+    `);
+  }
+
+  $('next').onclick = () => {
+    if (validateStep()) {
+      page++;
+      render();
+    }
+  };
+
+  $('prev').onclick = () => {
+    if (page > 0) {
+      saveCurrentStepData();
+      page--;
+      render();
+    }
+  };
+
+  $('submit').onclick = () => {
+    if (validateStep()) {
+      loadingFlow(() => {
+        showSuccessScreen();
+      });
+    }
+  };
+
+  $('home').onclick = () => location.href = 'index.html';
+
+  $('modal').onclick = (e) => {
+    if (e.target.id === 'modal' && page !== pages.length - 1) {
+      // Do not allow closing if it's the final success screen
+      closeModal();
+    }
+  };
+
+  // Init
+  render();
+</script>
+</body>
+</html>
